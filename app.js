@@ -32,7 +32,7 @@ const filterAnimals = (animals, criteria) => {
     });
 }
 
-const reducer = (filtredData, contry) => {
+const filterReducer = (filtredData, contry) => {
     const tmpData = {}
     tmpData.name = contry.name;
 
@@ -54,6 +54,21 @@ const reducer = (filtredData, contry) => {
     return filtredData;
 };
 
+const countReducer = (filtredData, contry) => {
+    let tmpData = {};
+    let tmpPeople = {};
+    tmpData.name = contry.name;
+
+    contry.people.forEach((people) => {
+        tmpData.people = tmpData.people || [];
+        tmpPeople = {...people}
+        tmpPeople.name = tmpPeople.name + ` [${tmpPeople.animals.length}]`
+        tmpData.people.push(tmpPeople);
+    });
+    filtredData.push(tmpData);
+    return filtredData;
+};
+
 const [args] = process.argv.slice(2);
 const command = getCommand(args);
 const arg = getArg(args);
@@ -68,11 +83,13 @@ const init = (inputData) => {
                 console.log(data);
                 break;
             }
-            let filtredData = data.reduce(reducer, []);
+            let filtredData = data.reduce(filterReducer, []);
             console.log(JSON.stringify(filtredData,null, 2));
             break;
         case 'count':
             console.log('*****************  C O U N T I N G   D A T A  ***************');
+            let countedData = data.reduce(countReducer, []);
+            console.log(JSON.stringify(countedData, null, 2));
             break;
         default:
             console.error('invalid args');
